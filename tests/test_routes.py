@@ -127,3 +127,61 @@ class TestProductModel(unittest.TestCase):
         """Test deleting a product"""
         response = client.delete(f"/products/{product.id}")
         assert response.status_code == 204
+
+
+    def test_list_products_by_name(client):
+        """Test retrieving products by name"""
+        # Create a product for testing
+        product = ProductFactory(name="Test Product")
+        product.create()
+
+        # Make a GET request to search for the product by name
+        response = client.get("/products", query_string={"name": "Test Product"})
+        
+        assert response.status_code == 200
+        assert len(response.json) > 0  # Ensure that the product is in the response
+        assert response.json[0]["name"] == "Test Product"  # Ensure the name matches
+
+    def test_list_products_by_category(client):
+        """Test retrieving products by category"""
+        # Create products for testing
+        product1 = ProductFactory(category="Electronics")
+        product1.create()
+        product2 = ProductFactory(category="Electronics")
+        product2.create()
+        product3 = ProductFactory(category="Clothing")
+        product3.create()
+
+        # Make a GET request to search for products by category "Electronics"
+        response = client.get("/products", query_string={"category": "Electronics"})
+        
+        assert response.status_code == 200
+        assert len(response.json) == 2  # Expecting two products in the "Electronics" category
+        for product in response.json:
+            assert product["category"] == "Electronics"  # Ensure the category is Electronics
+
+    def test_list_products_by_availability(client):
+        """Test retrieving products by availability"""
+        # Create products for testing
+        product1 = ProductFactory(available=True)
+        product1.create()
+        product2 = ProductFactory(available=True)
+        product2.create()
+        product3 = ProductFactory(available=False)
+        product3.create()
+
+        # Make a GET request to search for available products (available=True)
+        response = client.get("/products", query_string={"available": "true"})
+        
+        assert response.status_code == 200
+        assert len(response.json) == 2  # Expecting two products that are available
+        for product in response.json:
+            assert product["available"] is True  # Ensure the availability is True
+
+        # Make a GET request to search for unavailable products (available=False)
+        response = client.get("/products", query_string={"available": "false"})
+        
+        assert response.status_code == 200
+        assert len(response.json) == 1  # Expecting one product that is unavailable
+        for product in response.json:
+            assert product["available"] is False  # Ensure the availability is False

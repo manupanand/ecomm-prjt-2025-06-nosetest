@@ -84,6 +84,22 @@ def list_products():
     products = Product.all()
     return jsonify([product.serialize() for product in products]), 200
 
+# List products by name
+@app.route("/products/name/<string:name>", methods=["GET"])
+def list_products_by_name(name):
+    products = Product.find_by_name(name)  # Retrieves products filtered by name
+    if not products:
+        abort(404, f"No products found with name '{name}'.")
+    return jsonify([product.serialize() for product in products]), 200
+
+# List products by category
+@app.route("/products/category/<string:category>", methods=["GET"])
+def list_products_by_category(category):
+    products = Product.find_by_category(category)  # Retrieves products filtered by category
+    if not products:
+        abort(404, f"No products found in category '{category}'.")
+    return jsonify([product.serialize() for product in products]), 200
+
 # Get a single product by ID
 @app.route("/products/<int:product_id>", methods=["GET"])
 def get_product(product_id):
@@ -91,6 +107,14 @@ def get_product(product_id):
     if not product:
         abort(404, f"Product with ID {product_id} not found.")
     return jsonify(product.serialize()), 200
+
+# List products by availability
+@app.route("/products/availability/<bool:available>", methods=["GET"])
+def list_products_by_availability(available):
+    products = Product.find_by_availability(available)  # Retrieves products filtered by availability
+    if not products:
+        abort(404, f"No products found with availability status '{available}'.")
+    return jsonify([product.serialize() for product in products]), 200
 
 # Create a new product
 @app.route("/products", methods=["POST"])

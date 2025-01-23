@@ -8,9 +8,9 @@ class ProductFactory(factory.Factory):
     class Meta:
         model = Product
 
-    id = factory.Sequence(lambda n: n)
+    # If the Product model auto-generates the 'id', you can omit this.
     name = factory.Faker("word")
     description = factory.Faker("sentence", nb_words=10)
-    price = factory.Faker("pyfloat", left_digits=2, right_digits=2, positive=True)
+    price = factory.Faker("pyfloat", left_digits=2, right_digits=2, positive=True, min_value=1.0, max_value=1000.0)
     available = FuzzyChoice(choices=[True, False])
     category = factory.Faker("word")

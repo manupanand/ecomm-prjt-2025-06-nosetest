@@ -1,5 +1,3 @@
-
-
 # pylint: disable=function-redefined, missing-function-docstring
 # flake8: noqa
 """
@@ -116,6 +114,12 @@ def step_impl(context, text_string, element_name):
         )
     )
     assert(found)
+
+@then('I should see "{text_string}" on the page')
+def step_impl(context, text_string):
+    """ Check if a specific text is present anywhere on the page """
+    body = context.driver.find_element(By.TAG_NAME, 'body')
+    assert text_string in body.text, f"'{text_string}' not found on the page"
 
 @when('I change "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
