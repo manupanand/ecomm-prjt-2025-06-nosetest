@@ -78,35 +78,46 @@ def create_products():
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
-######################################################################
-# L I S T   A L L   P R O D U C T S
-######################################################################
+# List all products
+@app.route("/products", methods=["GET"])
+def list_products():
+    products = Product.all()
+    return jsonify([product.serialize() for product in products]), 200
 
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
+# Get a single product by ID
+@app.route("/products/<int:product_id>", methods=["GET"])
+def get_product(product_id):
+    product = Product.find(product_id)
+    if not product:
+        abort(404, f"Product with ID {product_id} not found.")
+    return jsonify(product.serialize()), 200
 
-######################################################################
-# R E A D   A   P R O D U C T
-######################################################################
+# Create a new product
+@app.route("/products", methods=["POST"])
+def create_product():
+    data = request.get_json()
+    product = Product()
+    product.deserialize(data)
+    product.create()
+    return jsonify(product.serialize()), 201
 
-#
-# PLACE YOUR CODE HERE TO READ A PRODUCT
-#
+# Update an existing product
+@app.route("/products/<int:product_id>", methods=["PUT"])
+def update_product(product_id):
+    product = Product.find(product_id)
+    if not product:
+        abort(404, f"Product with ID {product_id} not found.")
+    data = request.get_json()
+    product.deserialize(data)
+    product.update()
+    return jsonify(product.serialize()), 200
 
-######################################################################
-# U P D A T E   A   P R O D U C T
-######################################################################
+# Delete a product
+@app.route("/products/<int:product_id>", methods=["DELETE"])
+def delete_product(product_id):
+    product = Product.find(product_id)
+    if not product:
+        abort(404, f"Product with ID {product_id} not found.")
+    product.delete()
+    return "", 204
 
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
-
-######################################################################
-# D E L E T E   A   P R O D U C T
-######################################################################
-
-
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#

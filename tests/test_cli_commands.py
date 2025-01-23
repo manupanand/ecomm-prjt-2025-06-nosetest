@@ -21,3 +21,12 @@ class TestFlaskCLI(TestCase):
         with patch.dict(os.environ, {"FLASK_APP": "service:app"}, clear=True):
             result = self.runner.invoke(db_create)
             self.assertEqual(result.exit_code, 0)
+    def test_db_init_command(runner):
+        """Test the `flask db init` CLI command"""
+        result = runner.invoke(args=["db", "init"])
+        assert "Initialized the database" in result.output
+
+    def test_seed_command(runner):
+        """Test the `flask seed` CLI command"""
+        result = runner.invoke(args=["db", "seed"])
+        assert "Seeded the database" in result.output

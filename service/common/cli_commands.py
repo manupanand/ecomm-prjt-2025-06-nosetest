@@ -12,9 +12,12 @@ from service.models import db
 @app.cli.command("db-create")
 def db_create():
     """
-    Recreates a local database. You probably should not use this on
-    production.
+    Recreates a local database. You probably should not use this on production.
     """
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
+    try:
+        db.drop_all()
+        db.create_all()
+        db.session.commit()
+        app.logger.info("Database recreated successfully.")
+    except Exception as e:
+        app.logger.error(f"Error recreating database: {e}")

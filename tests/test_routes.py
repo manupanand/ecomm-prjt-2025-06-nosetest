@@ -92,3 +92,38 @@ class TestProductModel(unittest.TestCase):
     #
     # ADD YOUR TEST CASES HERE
     #
+    def test_list_products(client):
+        """Test retrieving all products"""
+        response = client.get("/products")
+        assert response.status_code == 200
+
+    def test_get_product(client, product):
+        """Test retrieving a single product by ID"""
+        response = client.get(f"/products/{product.id}")
+        assert response.status_code == 200
+        assert response.json["id"] == product.id
+
+    def test_create_product(client):
+        """Test creating a new product"""
+        new_product = {
+            "name": "Test Product",
+            "description": "Test description",
+            "price": 19.99,
+            "available": True,
+            "category": "Test Category"
+        }
+        response = client.post("/products", json=new_product)
+        assert response.status_code == 201
+        assert response.json["name"] == "Test Product"
+
+    def test_update_product(client, product):
+        """Test updating an existing product"""
+        updated_data = {"name": "Updated Product"}
+        response = client.put(f"/products/{product.id}", json=updated_data)
+        assert response.status_code == 200
+        assert response.json["name"] == "Updated Product"
+
+    def test_delete_product(client, product):
+        """Test deleting a product"""
+        response = client.delete(f"/products/{product.id}")
+        assert response.status_code == 204
